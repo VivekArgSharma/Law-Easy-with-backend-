@@ -230,6 +230,10 @@ h1, h2 {
   justify-content: center;
 }
 
+.texty{
+  color: white;
+}
+
 .rand-btn:hover:not(:disabled) {
   background: #884ea0; /* darker purple on hover */
 }

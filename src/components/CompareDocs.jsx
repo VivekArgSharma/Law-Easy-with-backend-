@@ -138,7 +138,7 @@ Make sure the output strictly follows this format every time.
 
   return (
     <div className="compare-container">
-      <h1>Compare Legal Documents</h1>
+      <h1 className="heads">Compare Legal Documents</h1>
 
       <div className="input-section">
         {/* Upload for Document 1 */}

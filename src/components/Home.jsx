@@ -7,8 +7,8 @@ export default function Home() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Welcome to Legal Assistant</h1>
-      <p>Select a feature to continue:</p>
+      <h1 className="text">AI-ttorney</h1>
+      <p className="text">Select a feature to continue:</p>
 
       <div className="button-flex">
         <button

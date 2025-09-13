@@ -160,12 +160,12 @@ function LegalDocGenerator() {
 
   return (
     <div className="generator-container">
-      <h1>Indian Legal Document Generator</h1>
+      <h1 className="texty">Indian Legal Document Generator</h1>
 
       {/* Step 1: Selection */}
       {!chatHistory.length && !finalDoc && (
         <div className="doc-selection">
-          <h2>Select Document Type</h2>
+          <h2 className="texty">Select Document Type</h2>
           <select value={docType} onChange={(e) => setDocType(e.target.value)}>
             <option value="">-- Select --</option>
             <option value="Rental Agreement">Rental Agreement</option>

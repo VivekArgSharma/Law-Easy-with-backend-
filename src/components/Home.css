@@ -43,6 +43,9 @@ body{
 .gradient-btn:hover span {
   background-color: transparent;
 }
+.text{
+  color: white;
+}
 
 /* Dark mode (optional if you want to support it) */
 @media (prefers-color-scheme: dark) {
