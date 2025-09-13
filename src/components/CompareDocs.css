@@ -1,0 +1,178 @@
+.compare-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+.input-section {
+  display: flex;
+  gap: 20px;
+  margin-top: 100px;
+  margin-bottom: 100px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+textarea {
+  width: 50%;
+  height: 200px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+/* Converted to use .comp-btn */
+.comp-btn {
+  background: #a370f0;
+  color: white;
+  font-family: inherit;
+  padding: 0.35em;
+  padding-left: 1.2em;
+  font-size: 17px;
+  font-weight: 500;
+  border-radius: 0.9em;
+  border: none;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 0 1.6em -0.6em #714da6;
+  overflow: hidden;
+  position: relative;
+  height: 2.8em;
+  padding-right: 3.3em;
+  cursor: pointer;
+}
+
+.comp-btn .icon {
+  background: white;
+  margin-left: 1em;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.2em;
+  width: 2.2em;
+  border-radius: 0.7em;
+  box-shadow: 0.1em 0.1em 0.6em 0.2em #7b52b9;
+  right: 0.3em;
+  transition: all 0.3s;
+}
+
+.comp-btn:hover .icon {
+  width: calc(100% - 0.6em);
+}
+
+.comp-btn .icon svg {
+  width: 1.1em;
+  transition: transform 0.3s;
+  color: #7b52b9;
+}
+
+.comp-btn:hover .icon svg {
+  transform: translateX(0.1em);
+}
+
+.comp-btn:active .icon {
+  transform: scale(0.95);
+}
+
+
+.results {
+  margin-top: 20px;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  white-space: pre-wrap; /* keeps line breaks from Gemini output */
+}
+
+.results pre {
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.template-preview {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff8e7;
+  border: 1px solid #f1c40f;
+  border-radius: 6px;
+}
+
+.template-preview h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #d35400;
+}
+
+.template-preview pre {
+  background: #fffdf7;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #f39c12;
+  white-space: pre-wrap;
+  font-family: "Courier New", monospace;
+  line-height: 1.6;
+}
+.filebutton {
+  border: none;
+  display: flex;
+  padding: 0.75rem 1.5rem;
+  background-color: #488aec;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.75rem;
+  box-shadow:
+    0 4px 6px -1px #488aec31,
+    0 2px 4px -1px #488aec17;
+  transition: all 0.6s ease;
+}
+
+.filebutton:hover {
+  box-shadow:
+    0 10px 15px -3px #488aec4f,
+    0 4px 6px -2px #488aec17;
+}
+
+.filebutton:focus,
+.filebutton:active {
+  opacity: 0.85;
+  box-shadow: none;
+}
+
+.filebutton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.filebutton img.icon {
+  width: 1.25rem;   /* 20px */
+  height: 1.25rem;
+}
+
+.comp-btn-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 50px;
+}

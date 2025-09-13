@@ -1,0 +1,14 @@
+.main-head{
+    color: white;
+}
+.sub-head{
+    margin-top: 50px;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+.head-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

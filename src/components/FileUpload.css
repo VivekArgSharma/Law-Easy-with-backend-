@@ -1,0 +1,43 @@
+.file-input{
+    display: flex;
+    align-items: center;
+}
+.filebutton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+  background: linear-gradient(to right, #06b6d4, #3b82f6);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.filebutton:hover {
+  background: linear-gradient(to right, #0ea5e9, #2563eb);
+}
+
+.filebutton:active {
+  transform: scale(0.97);
+}
+
+.filebutton .icon {
+  width: 20px;
+  height: 20px;
+  stroke: white;
+}
+.btn-dzn{
+    width: 170px;
+    display: flex;
+    align-items: center;
+    margin-left: 681px;
+    margin-right: auto;
+    margin-top: 100px;
+}
+.head{
+  margin-top: 50px;
+}
