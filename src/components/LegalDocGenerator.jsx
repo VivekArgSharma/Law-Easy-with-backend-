@@ -251,15 +251,7 @@ function LegalDocGenerator() {
 
       {/* Back to Home */}
       <button
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          backgroundColor: "#e74c3c",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
+        className="back-button"
         onClick={() => navigate("/")}
       >
         ⬅ Back to Home

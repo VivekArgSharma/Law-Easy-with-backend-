@@ -32,10 +32,8 @@
 }
 .btn-dzn{
     width: 170px;
-    display: flex;
-    align-items: center;
-    margin-left: 681px;
-    margin-right: auto;
+    margin-left: auto;
+    margin-right: 725px;
     margin-top: 100px;
 }
 .head{

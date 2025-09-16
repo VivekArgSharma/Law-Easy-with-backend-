@@ -143,11 +143,11 @@ Make sure the output strictly follows this format every time.
       <div className="input-section">
         {/* Upload for Document 1 */}
         <div>
-          <label htmlFor="file-upload-1" className="filebutton">
+          <label htmlFor="file-upload-1" className={`filebutton ${uploaded1 ? 'uploaded' : ''}`}>
             <svg xmlns="http://www.w3.org/2000/svg" className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
             </svg>
-            {uploaded1 ? "Uploaded" : "Upload File"}
+            {uploaded1 ? "✓ Document 1 Ready" : "Upload Document 1"}
           </label>
 
           <input
@@ -161,11 +161,11 @@ Make sure the output strictly follows this format every time.
 
         {/* Upload for Document 2 */}
         <div>
-          <label htmlFor="file-upload-2" className="filebutton">
+          <label htmlFor="file-upload-2" className={`filebutton ${uploaded2 ? 'uploaded' : ''}`}>
             <svg xmlns="http://www.w3.org/2000/svg" className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
             </svg>
-            {uploaded2 ? "Uploaded" : "Upload File"}
+            {uploaded2 ? "✓ Document 2 Ready" : "Upload Document 2"}
           </label>
 
           <input
@@ -207,15 +207,7 @@ Make sure the output strictly follows this format every time.
 
       {/* Back to Home button */}
       <button
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          backgroundColor: "#e74c3c",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
+        className="back-button"
         onClick={() => navigate("/")}
       >
         ⬅ Back to Home

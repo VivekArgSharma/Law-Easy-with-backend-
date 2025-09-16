@@ -6,9 +6,9 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1 className="text">AI-ttorney</h1>
-      <p className="text">Select a feature to continue:</p>
+    <div className="home-container">
+      <h1 className="home-title">AI-ttorney</h1>
+      <p className="home-subtitle">Select a feature to continue:</p>
 
       <div className="button-flex">
         <button

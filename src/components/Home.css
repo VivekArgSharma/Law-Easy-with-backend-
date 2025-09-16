@@ -1,11 +1,48 @@
-body{
-  background-color:#28282B;
+/* Dark theme background */
+body {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.button-flex{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-top: 200px;
+
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.home-title {
+  font-size: 4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #64ffda 0%, #00bcd4 50%, #0097a7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.home-subtitle {
+  color: #a0a6b8;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 60px;
+  font-weight: 400;
+}
+
+.button-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  max-width: 1000px;
 }
 
 .gradient-btn {
@@ -13,53 +50,170 @@ body{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.125rem; /* p-0.5 */
-  margin-bottom: 0.5rem; /* mb-2 */
-  margin-right: 0.5rem;  /* me-2 */
+  padding: 4px;
+  margin: 10px;
   overflow: hidden;
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 500; /* font-medium */
-  color: #111827; /* text-gray-900 */
-  border-radius: 0.5rem; /* rounded-lg */
-  background: linear-gradient(to bottom right, #06b6d4, #3b82f6); /* cyan → blue */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #64ffda 0%, #00bcd4 50%, #0097a7 100%);
   cursor: pointer;
   border: none;
   outline: none;
-  transition: color 0.2s ease-in;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 10px 30px rgba(100, 255, 218, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 280px;
+}
+
+.gradient-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.gradient-btn:hover::before {
+  left: 100%;
 }
 
 .gradient-btn span {
   position: relative;
-  padding: 0.625rem 1.25rem; /* px-5 py-2.5 */
-  border-radius: 0.375rem; /* rounded-md */
-  background-color: #ffffff;
-  transition: all 0.2s ease-in;
+  padding: 20px 32px;
+  border-radius: 12px;
+  background: rgba(30, 30, 50, 0.95);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  justify-content: center;
 }
 
 .gradient-btn:hover {
-  color: #ffffff; /* hover:text-white */
+  transform: translateY(-3px);
+  box-shadow: 
+    0 15px 40px rgba(100, 255, 218, 0.4),
+    0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .gradient-btn:hover span {
-  background-color: transparent;
-}
-.text{
-  color: white;
+  background: transparent;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Dark mode (optional if you want to support it) */
-@media (prefers-color-scheme: dark) {
+.gradient-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Individual button styling */
+.gradient-btn:nth-child(1) {
+  background: linear-gradient(135deg, #64ffda 0%, #00bcd4 100%);
+}
+
+.gradient-btn:nth-child(2) {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  box-shadow: 
+    0 10px 30px rgba(255, 107, 107, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.gradient-btn:nth-child(2):hover {
+  box-shadow: 
+    0 15px 40px rgba(255, 107, 107, 0.4),
+    0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.gradient-btn:nth-child(3) {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  box-shadow: 
+    0 10px 30px rgba(168, 85, 247, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.gradient-btn:nth-child(3):hover {
+  box-shadow: 
+    0 15px 40px rgba(168, 85, 247, 0.4),
+    0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .home-title {
+    font-size: 3rem;
+  }
+  
+  .home-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+  }
+  
+  .button-flex {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
   .gradient-btn {
-    color: #ffffff;
+    min-width: 250px;
   }
+  
   .gradient-btn span {
-    background-color: #111827;
-  }
-  .gradient-btn:hover span {
-    background-color: transparent;
+    padding: 18px 28px;
+    font-size: 15px;
   }
 }
 
+@media (max-width: 480px) {
+  .home-title {
+    font-size: 2.5rem;
+  }
+  
+  .gradient-btn {
+    min-width: 220px;
+  }
+  
+  .gradient-btn span {
+    padding: 16px 24px;
+    font-size: 14px;
+  }
+}
 
+/* Animation for page load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+.home-container > * {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
 
+.home-title {
+  animation-delay: 0.1s;
+}
+
+.home-subtitle {
+  animation-delay: 0.2s;
+}
+
+.button-flex {
+  animation-delay: 0.3s;
+}
