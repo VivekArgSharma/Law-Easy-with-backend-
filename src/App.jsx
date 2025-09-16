@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Header from "./components/Header.jsx";
 import FileUpload from "./components/FileUpload.jsx";
@@ -12,6 +13,7 @@ import LegalDocGenerator from "./components/LegalDocGenerator.jsx";
 // Wrapper for Summary + Chat flow
 function SummaryAndChat() {
   const [uploadedFile, setUploadedFile] = useState(null);
+  const navigate = useNavigate();
 
   return (
     <main className="container">
@@ -24,6 +26,12 @@ function SummaryAndChat() {
       ) : (
         <FileUpload setFile={setUploadedFile} />
       )}
+      <button
+        className="back-button"
+        onClick={() => navigate("/")}
+      >
+        ⬅ Back to Home
+      </button>
     </main>
   );
 }
