@@ -7,7 +7,7 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <h1 className="home-title">AI-ttorney</h1>
+      <h1 className="home-title">Law Easy</h1>
       <p className="home-subtitle">Select a feature to continue:</p>
 
       <div className="button-flex">

@@ -1,67 +1,73 @@
-🏛️ AI-ttorney – Demystifying Legal Documents with Gemini
+⚖️ Law Easy – Your AI-Powered Legal Assistant
 
-A Generative AI-powered web app to summarize, compare, analyze, and generate Indian legal documents in simple language.
-Built for the Google Gen AI Exchange Hackathon.
+“Understand, compare, and create legal documents with ease.”
+Built using Google Gemini for the Gen AI Exchange Hackathon.
 
 📌 Problem Statement
 
-Legal documents are often long, complex, and full of jargon.
+Legal documents are often:
 
-Common people struggle to understand what they’re signing.
+Full of jargon that non-lawyers struggle to understand.
 
-Comparing two contracts or spotting hidden risks is hard.
+Time-consuming to read and compare.
 
-Drafting legal documents usually requires expensive lawyers.
+Expensive to draft correctly without professional help.
 
 💡 Our Solution
 
-AI-ttorney makes legal documents accessible, understandable, and actionable using Google Gemini models.
+Law Easy makes legal processes simpler by combining Generative AI with an intuitive interface.
 
-📑 Summarize & Explain: Upload a document (PDF, image, text). The AI gives a structured summary in plain English.
+📑 Summarize Documents – Upload contracts, agreements, or notices and get clear, structured summaries in plain English.
 
-⚖️ Risk Analysis: Highlights issues, vague clauses, and unfair terms with risk levels (High/Medium/Low).
+⚠️ Spot Risks – Detect vague or unfair clauses, with priority ratings (High/Medium/Low).
 
-📊 Compare Documents: Paste or upload two documents → AI finds and lists key differences.
+📊 Compare Contracts – Upload two legal docs and instantly see the differences.
 
-🛠️ Generate Legal Docs: Select a type (Rental Agreement, Partnership Deed, Will, etc.). The AI asks questions one by one and builds the final document.
+🛠️ Generate Legal Drafts – Select a document type (Rental Agreement, Partnership Deed, Will, NDA, etc.) → AI asks you questions step by step → Generates a proper draft.
 
-🎲 Random Example Mode: Instantly generate a demo legal document with fake but realistic data.
+🎲 Example Generator – Instantly create a sample legal document with random but realistic details.
 
 🚀 Tech Stack
 
 Frontend: React (Vite) + React Router
 
-AI Models: Google Gemini 2.0 Flash (Q&A, chat, analysis) + Gemini 2.5 Pro (final document drafting)
+AI Models:
+
+Gemini 2.0 Flash → For Q&A, summarization, and interactive chat
+
+Gemini 2.5 Pro → For final document drafting (higher accuracy)
 
 Styling: Custom CSS
 
-File Support: PDF, images, text
+File Support: PDF, images, and text
 
-(Currently frontend-only; can be extended with a backend + DB like Supabase/Postgres for history & multi-user support.)
+(Currently frontend-only; extendable with a backend + database for history & persistence.)
 
-🔑 Features Demo
-1. Summarization & Risk Analysis
+✨ Features Overview
+1️⃣ Summarization & Risk Analysis
 
-Upload a legal doc → Get structured summary + risk map.
+Upload any legal document → Get a structured breakdown + plain-English explanation.
 
-2. Document Comparison
+Visual risk map shows fair vs risky clauses.
 
-Upload two docs → AI lists differences clearly.
+2️⃣ Document Comparison
 
-3. Interactive Legal Doc Generator
+Upload two files → See key differences in clauses and terms.
 
-Choose a doc type → AI interviews you question by question → Generate final draft.
+3️⃣ Interactive Document Generator
 
-4. Randomize Mode
+Choose a type → AI interviews you question by question → Generates final draft when you’re ready.
 
-Demo any legal document instantly with random but realistic data.
+4️⃣ Random Example Mode
+
+Quickly generate a demo version of any supported legal document.
 
 🛠️ Setup & Installation
 
-Clone this repo:
+Clone the repo:
 
-git clone https://github.com/your-username/ai-ttorney.git
-cd ai-ttorney
+git clone https://github.com/your-username/law-easy.git
+cd law-easy
 
 
 Install dependencies:
@@ -69,14 +75,14 @@ Install dependencies:
 npm install
 
 
-Add your Gemini API Key in the code:
+Add your Gemini API Key:
 
 const genAI = new GoogleGenerativeAI("YOUR_API_KEY");
 
 
-⚠️ For production, move the key to a backend or environment variable (never expose in public frontend).
+⚠️ Never expose this key in public deployments — use environment variables or a backend.
 
-Run the dev server:
+Run locally:
 
 npm run dev
 
@@ -97,18 +103,18 @@ src/
 
 🌟 Future Enhancements
 
-🔐 Add backend + database (Supabase/Postgres) to store summaries & history.
+🔐 Add backend + database (Supabase/Postgres) to store summaries & generated docs.
 
-🌍 Add multilingual support (Hindi, Kannada, Tamil, etc.).
+🌍 Provide multi-language support (Hindi, Kannada, Tamil, etc.).
 
-🖊️ Allow editing AI-generated docs directly in app.
+🖊️ Enable direct editing of AI-generated documents.
 
-📑 Export options: PDF, DOCX.
+📑 Export options: PDF / DOCX.
 
-🧑‍⚖️ Extend library of Indian legal templates.
+📚 Expand library of legal templates.
 
 👨‍💻 Team
 
-Built by Natural Intelligence for the Google Gen AI Exchange Hackathon.
+Built by [Your Name / Team Name] for the Google Gen AI Exchange Hackathon.
 
-✨ “Making law simple, one document at a time.”
+✨ “Law Easy makes legal documents simple, clear, and accessible for everyone.”
