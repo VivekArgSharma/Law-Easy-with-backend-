@@ -129,7 +129,7 @@ For each category, make sure to address the following:
 
         `;
 
-    const response = await modelFlash.generateContent([
+    const response = await modelPro.generateContent([
       { inlineData: { data: file.data, mimeType: file.mimeType } },
       prompt,
     ]);
