@@ -1,4 +1,4 @@
-// server/server.js
+
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -129,7 +129,7 @@ For each category, make sure to address the following:
 
         `;
 
-    const response = await modelPro.generateContent([
+    const response = await modelFlash.generateContent([
       { inlineData: { data: file.data, mimeType: file.mimeType } },
       prompt,
     ]);
@@ -375,7 +375,9 @@ Now generate the full and final ${docType} using the collected details.
 Write it as a proper legal document.
     `;
 
-    const response = await modelPro.generateContent(finalPrompt);
+    const response = await modelPro.generateContent([
+      {text: finalPrompt}
+    ]);
     const text = await response.response.text();
     return res.json({ text });
   } catch (err) {
@@ -396,7 +398,9 @@ Generate a fully filled ${docType} using random but realistic details (fake name
 Ensure it looks like a proper legal document but is only for demo purposes.
     `;
 
-    const response = await modelPro.generateContent(randomPrompt);
+    const response = await modelPro.generateContent([
+      {text: randomPrompt}
+    ]);
     const text = await response.response.text();
     return res.json({ text });
   } catch (err) {
