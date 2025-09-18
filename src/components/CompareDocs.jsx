@@ -1,10 +1,10 @@
+// src/components/CompareDocs.jsx
 import React, { useState } from "react";
 import "./CompareDocs.css";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useNavigate } from "react-router-dom";
 import * as pdfjsLib from "pdfjs-dist";
-const apiKey = import.meta.env.VITE_API_KEY;
+import { useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
@@ -19,15 +19,9 @@ export default function CompareDocs() {
 
   const navigate = useNavigate();
 
-  // Gemini API setup
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-  // Extract text from PDF file
   const extractPdfText = async (file) => {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
     let textContent = "";
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
@@ -39,7 +33,6 @@ export default function CompareDocs() {
     return textContent;
   };
 
-  // Handle file input
   const handleFileUpload = async (e, setDoc, setUploaded) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -54,6 +47,7 @@ export default function CompareDocs() {
       setDoc({ type: "text", content: text });
       setUploaded(true);
     } else if (file.type.startsWith("image/")) {
+      // store file object; will convert to base64 when sending to server
       setDoc({ type: "image", content: file });
       setUploaded(true);
     } else {
@@ -61,7 +55,14 @@ export default function CompareDocs() {
     }
   };
 
-  // Compare docs
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(",")[1]); // strip prefix
+      reader.onerror = (error) => reject(error);
+    });
+
   const handleCompare = async () => {
     if (!doc1 || !doc2) {
       alert("Please upload both documents before comparing!");
@@ -72,78 +73,37 @@ export default function CompareDocs() {
     setResult("");
 
     try {
-      let inputs = [];
+      let payloadDoc1;
+      if (doc1.type === "text") payloadDoc1 = { type: "text", content: doc1.content };
+      else payloadDoc1 = { type: "image", data: await toBase64(doc1.content), mimeType: doc1.content.type };
 
-      if (doc1.type === "text") {
-        inputs.push(`Document 1:\n${doc1.content}`);
-      } else if (doc1.type === "image") {
-        inputs.push({ inlineData: { data: await toBase64(doc1.content), mimeType: doc1.content.type } });
-      }
+      let payloadDoc2;
+      if (doc2.type === "text") payloadDoc2 = { type: "text", content: doc2.content };
+      else payloadDoc2 = { type: "image", data: await toBase64(doc2.content), mimeType: doc2.content.type };
 
-      if (doc2.type === "text") {
-        inputs.push(`Document 2:\n${doc2.content}`);
-      } else if (doc2.type === "image") {
-        inputs.push({ inlineData: { data: await toBase64(doc2.content), mimeType: doc2.content.type } });
-      }
+      const resp = await fetch(`${API_BASE}/api/compare`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ doc1: payloadDoc1, doc2: payloadDoc2 }),
+      });
 
-      const prompt = `
-You are a legal assistant AI. Compare two legal documents and provide the differences in a structured format. Follow this exact structure in every response:
-
-1. Document Type:
-   - Document A: [type]
-   - Document B: [type]
-   - Comparison Note: [e.g., "Both are contracts" or "Different legal types"]
-
-2. Overall Similarity:
-   - [State if they are identical, mostly similar, or completely different]
-
-3. Key Differences (List category by category):
-   - Parties Involved: [difference or "Same"]
-   - Dates & Duration: [difference or "Same"]
-   - Obligations & Duties: [difference or "Same"]
-   - Rights Granted: [difference or "Same"]
-   - Restrictions / Limitations: [difference or "Same"]
-   - Payment Terms: [difference or "Same"]
-   - Termination Clauses: [difference or "Same"]
-   - Liabilities & Indemnities: [difference or "Same"]
-   - Dispute Resolution: [difference or "Same"]
-   - Confidentiality: [difference or "Same"]
-   - Miscellaneous Clauses: [difference or "Same"]
-
-4. Practical Legal Impact:
-   - [Explain how the differences could affect the parties in plain English]
-
-Make sure the output strictly follows this format every time.
-      `;
-
-      const response = await model.generateContent([prompt, ...inputs]);
-      const text = await response.response.text();
-
-      setResult(text);
-    } catch (error) {
-      console.error("Error comparing documents:", error);
+      const data = await resp.json();
+      setResult(data.text || "No differences returned.");
+    } catch (err) {
+      console.error(err);
       setResult("⚠️ Something went wrong while comparing documents.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
-
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(",")[1]);
-      reader.onerror = (error) => reject(error);
-    });
 
   return (
     <div className="compare-container">
       <h1 className="heads">Compare Legal Documents</h1>
 
       <div className="input-section">
-        {/* Upload for Document 1 */}
         <div>
-          <label htmlFor="file-upload-1" className={`filebutton ${uploaded1 ? 'uploaded' : ''}`}>
+          <label htmlFor="file-upload-1" className={`filebutton ${uploaded1 ? "uploaded" : ""}`}>
             <svg xmlns="http://www.w3.org/2000/svg" className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
             </svg>
@@ -159,9 +119,8 @@ Make sure the output strictly follows this format every time.
           />
         </div>
 
-        {/* Upload for Document 2 */}
         <div>
-          <label htmlFor="file-upload-2" className={`filebutton ${uploaded2 ? 'uploaded' : ''}`}>
+          <label htmlFor="file-upload-2" className={`filebutton ${uploaded2 ? "uploaded" : ""}`}>
             <svg xmlns="http://www.w3.org/2000/svg" className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
             </svg>
@@ -181,15 +140,6 @@ Make sure the output strictly follows this format every time.
       <div className="comp-btn-container">
         <button className="comp-btn" onClick={handleCompare} disabled={loading}>
           {loading ? "Comparing..." : "Find Differences"}
-          <div className="icon">
-            <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 0h24v24H0z" fill="none"></path>
-              <path
-                d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
-                fill="currentColor"
-              ></path>
-            </svg>
-          </div>
         </button>
       </div>
 
@@ -197,7 +147,6 @@ Make sure the output strictly follows this format every time.
         <h2>Differences Found</h2>
         {result ? (
           <div className="template-preview">
-            <h2>Differences Found</h2>
             <pre>{result}</pre>
           </div>
         ) : (
@@ -205,11 +154,7 @@ Make sure the output strictly follows this format every time.
         )}
       </div>
 
-      {/* Back to Home button */}
-      <button
-        className="back-button"
-        onClick={() => navigate("/")}
-      >
+      <button className="back-button" onClick={() => navigate("/")}>
         ⬅ Back to Home
       </button>
     </div>

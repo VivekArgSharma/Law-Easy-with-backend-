@@ -1,26 +1,21 @@
+// src/components/LegalDocGenerator.jsx
 import { useState } from "react";
 import "./LegalDocGenerator.css";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
-const apiKey = import.meta.env.VITE_API_KEY;
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 function LegalDocGenerator() {
   const navigate = useNavigate();
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
-  const model2 = genAI.getGenerativeModel({ model: "models/gemini-2.5-pro" });
-
   const [docType, setDocType] = useState("");
-  const [template, setTemplate] = useState(""); 
+  const [template, setTemplate] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [userInput, setUserInput] = useState("");
   const [finalDoc, setFinalDoc] = useState("");
   const [loading, setLoading] = useState(false);
-  const [readyToGenerate, setReadyToGenerate] = useState(false); // new state
+  const [readyToGenerate, setReadyToGenerate] = useState(false);
 
-  // Step 1: Generate template + start one-by-one Q&A
   async function startChat() {
     if (!docType) {
       alert("Please select a document type first!");
@@ -28,141 +23,94 @@ function LegalDocGenerator() {
     }
 
     setLoading(true);
-
     try {
-      const templatePrompt = `
-        You are a legal expert in Indian law.
-        Create a clean, professional template for a ${docType}.
-        Show placeholders like [NAME], [ADDRESS], [DATE].
-        Do not fill them, just show the structure.
-      `;
-      const templateResult = await model.generateContent(templatePrompt);
-      const templateText = templateResult.response.text();
-      setTemplate(templateText);
-
-      const startPrompt = `
-        You are a legal expert in Indian law.
-        I want to create a ${docType}.
-        Based on the placeholders in the template,
-        ask me one question at a time (e.g. "What is your name?").
-        Do not generate the document yet.
-        When all info is gathered, say exactly:
-        "✅ All required info has been collected. You can now generate your ${docType}."
-      `;
-      const startResult = await model.generateContent(startPrompt);
-      const firstQuestion = startResult.response.text();
-
-      setChatHistory([{ role: "assistant", text: firstQuestion }]);
-    } catch (error) {
-      console.error("Error starting chat:", error);
+      const resp = await fetch(`${API_BASE}/api/generator/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ docType }),
+      });
+      const data = await resp.json();
+      setTemplate(data.template || "");
+      setChatHistory([{ role: "assistant", text: data.firstQuestion || "What is your name?" }]);
+    } catch (err) {
+      console.error(err);
       setChatHistory([{ role: "assistant", text: "⚠️ Failed to start chat. Try again." }]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
-  // Step 2: Handle user replies
   async function handleUserReply() {
     if (!userInput) return;
-
-    const updatedHistory = [...chatHistory, { role: "user", text: userInput }];
-    setChatHistory(updatedHistory);
+    const updated = [...chatHistory, { role: "user", text: userInput }];
+    setChatHistory(updated);
     setUserInput("");
     setLoading(true);
 
     try {
-      const conversation = updatedHistory
-        .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.text}`)
-        .join("\n");
-
-      const prompt = `
-        Document type: ${docType}
-
-        Conversation so far:
-        ${conversation}
-
-        Rules:
-        - If more info is missing, ask ONLY the next specific question.
-        - Keep questions short and clear ("What is your address?").
-        - Do NOT generate the final document yet.
-        - When ALL placeholders are filled, say exactly:
-          "✅ All required info has been collected. You can now generate your ${docType}."
-      `;
-
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const conversation = updated.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.text}`).join("\n");
+      const resp = await fetch(`${API_BASE}/api/generator/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ docType, conversation }),
+      });
+      const data = await resp.json();
+      const text = data.text || "";
 
       if (text.includes("✅ All required info has been collected")) {
         setReadyToGenerate(true);
-        setChatHistory([...updatedHistory, { role: "assistant", text }]);
-      } else {
-        setChatHistory([...updatedHistory, { role: "assistant", text }]);
       }
-    } catch (error) {
-      console.error("Error in chat:", error);
+      setChatHistory((h) => [...h, { role: "assistant", text }]);
+    } catch (err) {
+      console.error(err);
+      setChatHistory((h) => [...h, { role: "assistant", text: "⚠️ Error. Try again." }]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
-  // Step 3: Generate final doc when button clicked
   async function generateFinalDoc() {
     setLoading(true);
-
     try {
-      const conversation = chatHistory
-        .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.text}`)
-        .join("\n");
-
-      const finalPrompt = `
-        Document type: ${docType}
-        Conversation so far:
-        ${conversation}
-
-        Now generate the full and final ${docType} using the collected details.
-        Write it as a proper legal document.
-      `;
-
-      const result = await model2.generateContent(finalPrompt);
-      const text = result.response.text();
-      setFinalDoc(text);
-    } catch (error) {
-      console.error("Error generating final document:", error);
+      const conversation = chatHistory.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.text}`).join("\n");
+      const resp = await fetch(`${API_BASE}/api/generator/final`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ docType, conversation }),
+      });
+      const data = await resp.json();
+      setFinalDoc(data.text || "⚠️ Failed to generate the document.");
+    } catch (err) {
+      console.error(err);
       setFinalDoc("⚠️ Failed to generate the document.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
-  // Step 4: Randomize with fake data
   async function randomizeDoc() {
     if (!docType) return;
     setLoading(true);
-
     try {
-      const randomPrompt = `
-        You are a legal expert in Indian law.
-        Generate a fully filled ${docType} using random but realistic details
-        (fake names, addresses, dates, numbers, etc.).
-        Ensure it looks like a proper legal document but is only for demo purposes.
-      `;
-
-      const result = await model2.generateContent(randomPrompt);
-      const text = result.response.text();
-      setFinalDoc(text);
-    } catch (error) {
-      console.error("Error generating random document:", error);
-      setFinalDoc("⚠️ Failed to generate example document.");
+      const resp = await fetch(`${API_BASE}/api/generator/random`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ docType }),
+      });
+      const data = await resp.json();
+      setFinalDoc(data.text || "⚠️ Failed to generate example.");
+    } catch (err) {
+      console.error(err);
+      setFinalDoc("⚠️ Failed to generate example.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
     <div className="generator-container">
       <h1 className="texty">Indian Legal Document Generator</h1>
 
-      {/* Step 1: Selection */}
       {!chatHistory.length && !finalDoc && (
         <div className="doc-selection">
           <h2 className="texty">Select Document Type</h2>
@@ -175,26 +123,19 @@ function LegalDocGenerator() {
             <option value="Employment Contract">Employment Contract</option>
           </select>
 
-          {/* Start & Randomize Buttons */}
           <div style={{ marginTop: "15px" }}>
             <button onClick={startChat} disabled={loading} style={{ marginRight: "10px" }}>
               {loading ? "Loading..." : "Start"}
             </button>
             {docType && (
-              <button
-                className="rand-btn"
-                onClick={randomizeDoc}
-                disabled={loading}
-              >
+              <button className="rand-btn" onClick={randomizeDoc} disabled={loading}>
                 {loading ? "Generating..." : "Randomize Example"}
               </button>
-
             )}
           </div>
         </div>
       )}
 
-      {/* Step 2: Show template */}
       {template && !finalDoc && (
         <div className="template-preview">
           <h2>{docType} Template</h2>
@@ -202,7 +143,6 @@ function LegalDocGenerator() {
         </div>
       )}
 
-      {/* Step 3: Chat */}
       {chatHistory.length > 0 && !finalDoc && (
         <div className="chatbox">
           <h2>{docType} – Fill in Details</h2>
@@ -215,12 +155,7 @@ function LegalDocGenerator() {
           </div>
 
           <div className="input-area">
-            <input
-              type="text"
-              placeholder="Type your answer..."
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-            />
+            <input type="text" placeholder="Type your answer..." value={userInput} onChange={(e) => setUserInput(e.target.value)} />
             <button onClick={handleUserReply} disabled={loading}>
               {loading ? "Thinking..." : "Send"}
             </button>
@@ -228,20 +163,14 @@ function LegalDocGenerator() {
 
           {readyToGenerate && (
             <div style={{ marginTop: "20px" }}>
-              <button
-                className="gen-btn"
-                onClick={generateFinalDoc}
-                disabled={loading}
-              >
+              <button className="gen-btn" onClick={generateFinalDoc} disabled={loading}>
                 {loading ? "Generating..." : `Generate ${docType}`}
               </button>
-
             </div>
           )}
         </div>
       )}
 
-      {/* Step 4: Show final doc */}
       {finalDoc && (
         <div className="template-preview">
           <h2>Generated {docType}</h2>
@@ -249,11 +178,7 @@ function LegalDocGenerator() {
         </div>
       )}
 
-      {/* Back to Home */}
-      <button
-        className="back-button"
-        onClick={() => navigate("/")}
-      >
+      <button className="back-button" onClick={() => navigate("/")}>
         ⬅ Back to Home
       </button>
     </div>
