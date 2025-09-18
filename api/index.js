@@ -375,9 +375,7 @@ Now generate the full and final ${docType} using the collected details.
 Write it as a proper legal document.
     `;
 
-    const response = await modelPro.generateContent([
-      {text: finalPrompt}
-    ]);
+    const response = await modelPro.generateContent(finalPrompt);
     const text = await response.response.text();
     return res.json({ text });
   } catch (err) {
@@ -398,9 +396,7 @@ Generate a fully filled ${docType} using random but realistic details (fake name
 Ensure it looks like a proper legal document but is only for demo purposes.
     `;
 
-    const response = await modelPro.generateContent([
-      {text: randomPrompt}
-    ]);
+    const response = await modelPro.generateContent(randomPrompt);
     const text = await response.response.text();
     return res.json({ text });
   } catch (err) {
