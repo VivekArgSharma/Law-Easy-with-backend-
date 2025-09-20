@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-// Configure PDF.js worker
+// Configure PDF.js worker (still useful if you later want text extraction)
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
 
 export default function CompareDocs() {
@@ -19,19 +19,14 @@ export default function CompareDocs() {
 
   const navigate = useNavigate();
 
-  const extractPdfText = async (file) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let textContent = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const text = await page.getTextContent();
-      text.items.forEach((item) => {
-        textContent += item.str + " ";
-      });
-    }
-    return textContent;
-  };
+  // Utility: convert file to base64
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(",")[1]); // strip prefix
+      reader.onerror = (error) => reject(error);
+    });
 
   const handleFileUpload = async (e, setDoc, setUploaded) => {
     const file = e.target.files[0];
@@ -42,26 +37,14 @@ export default function CompareDocs() {
       reader.onload = (event) => setDoc({ type: "text", content: event.target.result });
       reader.readAsText(file);
       setUploaded(true);
-    } else if (file.type === "application/pdf") {
-      const text = await extractPdfText(file);
-      setDoc({ type: "text", content: text });
-      setUploaded(true);
-    } else if (file.type.startsWith("image/")) {
-      // store file object; will convert to base64 when sending to server
-      setDoc({ type: "image", content: file });
+    } else if (file.type === "application/pdf" || file.type.startsWith("image/")) {
+      // Treat PDFs and images the same way: store file for base64 conversion later
+      setDoc({ type: "binary", content: file });
       setUploaded(true);
     } else {
       alert("⚠️ Only TXT, PDF, and Image files are supported.");
     }
   };
-
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(",")[1]); // strip prefix
-      reader.onerror = (error) => reject(error);
-    });
 
   const handleCompare = async () => {
     if (!doc1 || !doc2) {
@@ -74,12 +57,26 @@ export default function CompareDocs() {
 
     try {
       let payloadDoc1;
-      if (doc1.type === "text") payloadDoc1 = { type: "text", content: doc1.content };
-      else payloadDoc1 = { type: "image", data: await toBase64(doc1.content), mimeType: doc1.content.type };
+      if (doc1.type === "text") {
+        payloadDoc1 = { type: "text", content: doc1.content };
+      } else {
+        payloadDoc1 = {
+          type: doc1.content.type.includes("pdf") ? "pdf" : "image",
+          data: await toBase64(doc1.content),
+          mimeType: doc1.content.type,
+        };
+      }
 
       let payloadDoc2;
-      if (doc2.type === "text") payloadDoc2 = { type: "text", content: doc2.content };
-      else payloadDoc2 = { type: "image", data: await toBase64(doc2.content), mimeType: doc2.content.type };
+      if (doc2.type === "text") {
+        payloadDoc2 = { type: "text", content: doc2.content };
+      } else {
+        payloadDoc2 = {
+          type: doc2.content.type.includes("pdf") ? "pdf" : "image",
+          data: await toBase64(doc2.content),
+          mimeType: doc2.content.type,
+        };
+      }
 
       const resp = await fetch(`${API_BASE}/api/compare`, {
         method: "POST",

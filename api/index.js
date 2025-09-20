@@ -246,16 +246,22 @@ app.post("/api/compare", async (req, res) => {
     if (!doc1 || !doc2) return res.status(400).json({ error: "doc1 and doc2 required" });
 
     const inputs = [];
-    // If text doc, send as string. If image, include inlineData base64.
-    if (doc1.type === "text") inputs.push(`Document 1:\n${doc1.content}`);
-    else if (doc1.type === "image")
+
+    // handle doc1
+    if (doc1.type === "text") {
+      inputs.push(`Document 1:\n${doc1.content}`);
+    } else if (doc1.type === "image" || doc1.type === "pdf") {
       inputs.push({ inlineData: { data: doc1.data, mimeType: doc1.mimeType } });
+    }
 
-    if (doc2.type === "text") inputs.push(`Document 2:\n${doc2.content}`);
-    else if (doc2.type === "image")
+    // handle doc2
+    if (doc2.type === "text") {
+      inputs.push(`Document 2:\n${doc2.content}`);
+    } else if (doc2.type === "image" || doc2.type === "pdf") {
       inputs.push({ inlineData: { data: doc2.data, mimeType: doc2.mimeType } });
+    }
 
-    const systemPrompt =  `
+    const systemPrompt = `
 You are a legal assistant AI. Compare two legal documents and provide the differences in a structured format. Follow this exact structure in every response:
 
 1. Document Type:
@@ -283,7 +289,7 @@ You are a legal assistant AI. Compare two legal documents and provide the differ
    - [Explain how the differences could affect the parties in plain English]
 
 Make sure the output strictly follows this format every time.
-      `;
+    `;
 
     const response = await modelFlash.generateContent([systemPrompt, ...inputs]);
     const text = await response.response.text();
